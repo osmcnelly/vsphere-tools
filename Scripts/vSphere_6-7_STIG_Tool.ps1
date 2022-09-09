@@ -1,10 +1,14 @@
 ﻿# This script retrieves the advanced setting specified by the vSphere 6.7 STIG released by DISA. 
 # The script outputs the vm name, vulnerability ID, associated setting name, and setting status in CSV format.
+# This branch is pending official release of Powershell 7.3. 
+# Powershell 7.2's ConvertFrom-JSON -AsHashtable option creates a hashtable, disregarding the ordered format of 
+# the JSON file. This is undesirable. PS 7.3 changes ConvertFrom-JSON -AsHashtable to treat the data as an
+# ordered dictionary, preserving the formatting of the data within the JSON file. 
 
 # Relative Directory mapping
 $scriptdir = $PSScriptRoot
 $ParentDir = (Get-Item $scriptdir).parent 
-
+$AssetPath = Join-Path $ParentDir -ChildPath "\Assets"
 Import-Module $scriptdir\..\modules\vSphereConnect
 Import-Module $scriptdir\..\modules\GetVMNames
 Import-Module $scriptdir\..\modules\CreateReportDirectory
@@ -33,17 +37,10 @@ $FileCSV = New-Item -Type File -Path $csvPath
 $CreateCSV = "yes"
 $GridView = "no"
 
-# Ordered hashtable of settings to check on VM. Each setting's key is its respective vuln ID on the STIG checklist
-$settings = [ordered]@{
-	'V-239332' = "isolation.tools.copy.disable"; 'V-239333' = "isolation.tools.dnd.disable"; 
-	'V-239334' = "isolation.tools.paste.disable"; 'V-239335' = "isolation.tools.diskShrink.disable"; 
-    'V-239336' = "isolation.tools.diskwiper.disable"; 'V-239338' = "isolation.tools.hgfsServerSet.disable"; 
-	'V-239344' = "RemoteDisplay.maxConnections"; 'V-239345' = "RemoteDisplay.vnc.enabled"; 
-	'V-239346' = "tools.setinfo.sizeLimit"; 'V-239347' = "isolation.device.connectable.disable"; 
-	'V-239348' = "tools.guestlib.enableHostInf"; 'V-239349' = "sched.mem.pshare.salt"; 
-	'V-239350' = "ethernet*.filter*.name*"; 'V-239353' = "tools.guest.desktop.autolock"; 
-	'V-239354' = "mks.enable3d"
-}
+# Create an ordered hashtable of settings to check on VM by importing from the settings.json file. 
+# Each setting's key is its respective vuln ID on the STIG checklist
+$settings = [ordered]@{}
+$settings = get-content -raw $assetpath\settings.json | convertfrom-json -ashashtable
 
 $vmChoice = Read-Host -Prompt "Enter [1] to select all VMs. Enter [2] to specify VMs"
 
