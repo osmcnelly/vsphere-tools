@@ -1,3 +1,6 @@
+# This module establishes a PowerCLI session with an ESXi or VCSA based off user input. 
+# A PSCredential object is used to securely manage the login credentials.
+
 function VSphereConnect {
 	$server = Read-Host -Prompt 'Enter your vSphere or vCenter IP/FQDN'
 	
