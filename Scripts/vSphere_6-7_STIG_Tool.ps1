@@ -1,10 +1,19 @@
-﻿$scriptdir = $PSScriptRoot
+﻿# This script retrieves the advanced setting specified by the vSphere 6.7 STIG released by DISA. 
+# The script outputs the vm name, vulnerability ID, associated setting name, and setting status in CSV format.
+
+# Relative Directory mapping
+$scriptdir = $PSScriptRoot
+$ParentDir = (Get-Item $scriptdir).parent 
+
 Import-Module $scriptdir\..\modules\vSphereConnect
 Import-Module $scriptdir\..\modules\GetVMNames
+Import-Module $scriptdir\..\modules\CreateReportDirectory
+
+CreateReportDir
 
 $serverList = $global:DefaultVIServer
 
-if($null -eq $serverList){
+if ($null -eq $serverList){
 	Write-Host ">>> Not connected to server."
 	Write-Host ">>> Initializing PowerCLI Session. Please wait."
 	VSphereConnect
@@ -12,18 +21,19 @@ if($null -eq $serverList){
 
 # Variables
 $Date = Get-Date
-$Datefile = ( $Date ).ToString("yyyy-MM-dd-hhmmss")
+$Datefile = ($Date).ToString("yyyy-MM-dd-hhmmss")
 $ErrorActionPreference = "SilentlyContinue"
 $VMList = @()
-$ParentDir = (Get-Item $scriptdir).parent 
 $csvPath = Join-Path $ParentDir -ChildPath "\Reports\VSPHERE_REPORT_$Datefile.csv"
+
+# Create empty CSV report
+$FileCSV = New-Item -Type File -Path $csvPath
 
 # Variable to Change
 $CreateCSV = "yes"
 $GridView = "no"
-$FileCSV = New-Item -Type File -Path \..\$csvPath
 
-# Array of settings to check on VM
+# Ordered hashtable of settings to check on VM. Each setting's key is its respective vuln ID on the STIG checklist
 $settings = [ordered]@{
 	'V-239332' = "isolation.tools.copy.disable"; 'V-239333' = "isolation.tools.dnd.disable"; 
 	'V-239334' = "isolation.tools.paste.disable"; 'V-239335' = "isolation.tools.diskShrink.disable"; 
@@ -34,22 +44,26 @@ $settings = [ordered]@{
 	'V-239350' = "ethernet*.filter*.name*"; 'V-239353' = "tools.guest.desktop.autolock"; 
 	'V-239354' = "mks.enable3d"
 }
+
 $vmChoice = Read-Host -Prompt "Enter [1] to select all VMs. Enter [2] to specify VMs"
+
+# Switch to choose between gathering settings for all VMs managed by the ESXi/VCSA or specific named VMs
 Switch ($vmChoice){
-	1 {$VMList += Get-VM -Name cis*}
+	1 {$VMList += Get-VM -Name *}
 	2 {$VMList = GetVMNames}
 }
 
 # Gather settings and write them to the CSV file
 Write-Host "Gathering VM Settings"
 
+# Using 'Get-AdvancedSetting' to gather the settings for each VM, then outputting the results to the CSV report
 $Settings.GetEnumerator() | ForEach-Object {
 	$vid = $($_.Key)
 	foreach($VM in $VMList){
 		$report = Get-VM $VM | Get-AdvancedSetting -name $($_.Value) | `
 		Select-Object @{N="VID";E={$vid}},@{N='VM';E={$VM}},Name,Value,VID
 
-		# If setting returns null, update the csv to reflect that
+		# If setting returns null, update the csv to reflect that instead of dropping the $null value
 		if (!$report){ 
 			New-Object -TypeName PSCustomObject -Property @{
 			VID = $($_.Key)
@@ -67,7 +81,3 @@ $Settings.GetEnumerator() | ForEach-Object {
 		}
 	}
 }
-
-
-
-
