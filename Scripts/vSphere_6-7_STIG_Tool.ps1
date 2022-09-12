@@ -16,7 +16,7 @@ $serverList = $global:DefaultVIServer
 if ($null -eq $serverList){
 	Write-Host ">>> Not connected to server."
 	Write-Host ">>> Initializing PowerCLI Session. Please wait."
-	VSphereConnect
+	#VSphereConnect
 }
 
 # Variables
@@ -45,27 +45,38 @@ $settings = [ordered]@{
 	'V-239354' = "mks.enable3d"
 }
 
-$vmChoice = Read-Host -Prompt "Enter [1] to select all VMs. Enter [2] to specify VMs"
-
 # Switch to choose between gathering settings for all VMs managed by the ESXi/VCSA or specific named VMs
-Switch ($vmChoice){
-	1 {$VMList += Get-VM -Name *}
-	2 {$VMList = GetVMNames}
+$Choice = ''
+$ValidChoiceList = @(
+	1
+    2
+)
+
+while ([string]::IsNullOrEmpty($Choice)){
+    $Choice = Read-Host "Enter [1] to select all VMs. Enter [2] to specify VMs"
+    if ($Choice -notin $ValidChoiceList){
+        Write-Warning ('Your choice [ {0} ] is not valid.' -f $Choice)
+        Write-Warning '    Please try again & choose "1" or "2".'
+
+        $Choice = ''
+        pause
+    }
+    switch ($Choice){
+		1 {$VMList += Get-VM -Name *; break}
+		2 {$VMList = GetVMNames; break}
+    }
 }
+
 
 # Gather settings and write them to the CSV file
 Write-Host "Gathering VM Settings"
 
 # Using 'Get-AdvancedSetting' to gather the settings for each VM, then outputting the results to the CSV report
 $Settings.GetEnumerator() | ForEach-Object {
-	<#$report = New-Object -TypeName PSCustomObject -Property @{
-			VID = $($_.Key)
-			VM = $VM
-			Name = $($_.Value)
-	}#>
 	$vid = $($_.Key)
 	foreach($VM in $VMList){
-		$report = Get-VM $VM | Get-AdvancedSetting -name $($_.Value) | Select-Object @{N="VID";E={$vid}},@{N='VM';E={$VM}},Name,Value
+		$report = Get-VM $VM | Get-AdvancedSetting -name $($_.Value) |`
+		 Select-Object @{N="VID";E={$vid}},@{N='VM';E={$VM}},Name,Value
 
 		# If setting returns null, update the csv to reflect that instead of dropping the $null value
 		if (!$report){ 
