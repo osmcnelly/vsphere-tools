@@ -23,7 +23,8 @@ This is a collection of modules and scripts for automating tasks with PowerCLI.
         - `Get-ChildItem * -Recurse | Unblock-File`   
 
 You can verify that the PowerCLI module is available by using the following command: 
-    `Get-Module -Name VMware.PowerCLI* -ListAvailable` 
+    
+`Get-Module -Name VMware.PowerCLI* -ListAvailable` 
 
 ## Usage
 From a Powershell 5.0 terminal, specify the path to the script you would like to run. Scripts that generate reports 
