@@ -22,12 +22,12 @@ if ($null -eq $serverList){
 # Variables
 $Date = Get-Date
 $Datefile = ($Date).ToString("yyyy-MM-dd-hhmmss")
-$ErrorActionPreference = "SilentlyContinue"
+#$ErrorActionPreference = "SilentlyContinue"
 $VMList = @()
 $csvPath = Join-Path $ParentDir -ChildPath "\Reports\VSPHERE_REPORT_$Datefile.csv"
 
 # Create empty CSV report
-$FileCSV = New-Item -Type File -Path $csvPath
+$FileCSV = New-Item -Type File -Path \..\$csvPath
 
 # Variable to Change
 $CreateCSV = "yes"
@@ -58,10 +58,14 @@ Write-Host "Gathering VM Settings"
 
 # Using 'Get-AdvancedSetting' to gather the settings for each VM, then outputting the results to the CSV report
 $Settings.GetEnumerator() | ForEach-Object {
+	<#$report = New-Object -TypeName PSCustomObject -Property @{
+			VID = $($_.Key)
+			VM = $VM
+			Name = $($_.Value)
+	}#>
 	$vid = $($_.Key)
 	foreach($VM in $VMList){
-		$report = Get-VM $VM | Get-AdvancedSetting -name $($_.Value) | `
-		Select-Object @{N="VID";E={$vid}},@{N='VM';E={$VM}},Name,Value,VID
+		$report = Get-VM $VM | Get-AdvancedSetting -name $($_.Value) | Select-Object @{N="VID";E={$vid}},@{N='VM';E={$VM}},Name,Value
 
 		# If setting returns null, update the csv to reflect that instead of dropping the $null value
 		if (!$report){ 
