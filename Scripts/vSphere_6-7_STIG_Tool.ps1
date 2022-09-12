@@ -16,13 +16,13 @@ $serverList = $global:DefaultVIServer
 if ($null -eq $serverList){
 	Write-Host ">>> Not connected to server."
 	Write-Host ">>> Initializing PowerCLI Session. Please wait."
-	#VSphereConnect
+	VSphereConnect
 }
 
 # Variables
 $Date = Get-Date
 $Datefile = ($Date).ToString("yyyy-MM-dd-hhmmss")
-#$ErrorActionPreference = "SilentlyContinue"
+$ErrorActionPreference = "SilentlyContinue"
 $VMList = @()
 $csvPath = Join-Path $ParentDir -ChildPath "\Reports\VSPHERE_REPORT_$Datefile.csv"
 
@@ -66,7 +66,6 @@ while ([string]::IsNullOrEmpty($Choice)){
 		2 {$VMList = GetVMNames; break}
     }
 }
-
 
 # Gather settings and write them to the CSV file
 Write-Host "Gathering VM Settings"
