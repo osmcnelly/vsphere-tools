@@ -28,4 +28,4 @@ You can verify that the PowerCLI module is available by using the following comm
 
 ## Usage
 From a Powershell 5.0 terminal, specify the path to the script you would like to run. Scripts that generate reports 
-or other output are written to create any necessary files and directories at runtime. 
+or other output will automatically create any necessary files and directories at runtime. 
