@@ -42,12 +42,27 @@ $GridView = "no"
 $settings = [ordered]@{}
 $settings = get-content -raw $assetpath\settings.json | convertfrom-json -ashashtable
 
-$vmChoice = Read-Host -Prompt "Enter [1] to select all VMs. Enter [2] to specify VMs"
 
 # Switch to choose between gathering settings for all VMs managed by the ESXi/VCSA or specific named VMs
-Switch ($vmChoice){
-	1 {$VMList += Get-VM -Name *}
-	2 {$VMList = GetVMNames}
+$Choice = ''
+$ValidChoiceList = @(
+	1
+    2
+)
+
+while ([string]::IsNullOrEmpty($Choice)){
+    $Choice = Read-Host "Enter [1] to select all VMs. Enter [2] to specify VMs"
+    if ($Choice -notin $ValidChoiceList){
+        Write-Warning ('Your choice [ {0} ] is not valid.' -f $Choice)
+        Write-Warning '    Please try again & choose "1" or "2".'
+
+        $Choice = ''
+        pause
+    }
+    switch ($Choice){
+		1 {$VMList += Get-VM -Name *; break}
+		2 {$VMList = GetVMNames; break}
+    }
 }
 
 # Gather settings and write them to the CSV file
