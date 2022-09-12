@@ -18,8 +18,12 @@ This is a collection of modules and scripts for automating tasks with PowerCLI.
     and transfer the ZIP file to your local machine. 
     2. Check the PowerShell Module path by using the command: `$env:PSModulePath`.     
     3. Extract the contents of the ZIP file to one of the listed folders.
-    4. Unblock the files by using the commands `cd <path_to_powershell_modules_folder>` and `Get-ChildItem * -Recurse | Unblock-File`.   
-You can verify that the PowerCLI module is available by using the command `Get-Module -Name VMware.PowerCLI* -ListAvailable`. 
+    4. Unblock the files by using the following commands:
+        - `cd <path_to_powershell_modules_folder>` 
+        - `Get-ChildItem * -Recurse | Unblock-File`   
+
+You can verify that the PowerCLI module is available by using the following command: 
+    `Get-Module -Name VMware.PowerCLI* -ListAvailable` 
 
 ## Usage
 From a Powershell 5.0 terminal, specify the path to the script you would like to run. Scripts that generate reports 
