@@ -9,8 +9,7 @@ This is a collection of modules and scripts for automating tasks with PowerCLI.
 
 ### Steps for installing PowerCLI:
 - Online install:
-    1. Download a version of PowerCLI compatible with your versioon of ESXi from [the PowerCLI homepage](https://developer.vmware.com/web/tool/vmware-powercli)
-    2. To install all PowerCLI modules, run the command:
+    1. To install all PowerCLI modules on an internet-connected computer, run the command:
             ```
             Install-Module VMware.PowerCLI -Scope CurrentUser
             ```
