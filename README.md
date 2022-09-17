@@ -3,7 +3,8 @@
 This is a collection of modules and scripts for automating tasks with PowerCLI.
 
 ## Requirements
-- Powershell 5.0 
+- Powershell 5.1 
+- .NET Framework 4.7.2 or later
 - PowerCLI module
 
 ### Steps for installing PowerCLI:
