@@ -10,6 +10,7 @@ This is a collection of modules and scripts for automating tasks with PowerCLI.
 ### Steps for installing PowerCLI:
 - Online install:
     1. To install all PowerCLI modules on an internet-connected computer, run the command:
+    
             ```
             Install-Module VMware.PowerCLI -Scope CurrentUser
             ```
