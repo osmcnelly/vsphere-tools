@@ -37,7 +37,7 @@ $GridView = "no"
 $settings = [ordered]@{
     'V-239259' = "DCUI.Access"; 'V-239261' = "Syslog.global.logHost";
     'V-239262' = "Security.AccountLockFailures"; 'V-239263' = "Annotations.WelcomeMessage";
-    'V-239264' = "Config.Etc.issue"; 'v-239265' = "Config.Etc.issue";
+    'V-239264' = "Config.Etc.issue"; 'V-239265' = "Config.Etc.issue";
     'V-239285' = "Config.HostAgent.log.level"; 'V-239286' = "Security.PasswordQualityControl";
     'V-239287' = "Security.PasswordHistory"; 'V-239289' = "Config.HostAgent.plugins.solo.enableMob";
     'V-239294' = "Config.HostAgent.plugins.hostsvc.esxAdminsGroup"; 'V-239296' = "serVars.ESXiShellInteractiveTimeOut";
