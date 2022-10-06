@@ -1,23 +1,13 @@
-V-239259 DCUI.Access
-V-239261 Syslog.global.logHost
-V-239262 Security.AccountLockFailures
-V-239263 Annotations.WelcomeMessage
-V-239264 Config.Etc.issue
-v-239265 Config.Etc.issue
-V-239285 Config.HostAgent.log.level
-V-239286 Security.PasswordQualityControl
-V-239287 Security.PasswordHistory
-V-239289 Config.HostAgent.plugins.solo.enableMob
-V-239294 Config.HostAgent.plugins.hostsvc.esxAdminsGroup
-V-239296 serVars.ESXiShellInteractiveTimeOut
-V-239297 UserVars.ESXiShellTimeOut
-V-239298 UserVars.DcuiTimeOut
-V-239309 Mem.ShareForceSalting
-V-239312 Net.BlockGuestBPDU
-V-239316 Net.DVFilterBindIpAddress
-V-239326 UserVars.ESXiVPsDisabledProtocols
-V-239329 UserVars.SuppressShellWarning
-V-239330 Syslog.global.logHost
+'V-239259' = "DCUI.Access"; 'V'-239261' = "Syslog.global.logHost";
+'V-239262' = "Security.AccountLockFailures"; 'V-239263' = "Annotations.WelcomeMessage";
+'V-239264' = "Config.Etc.issue"; 'v-239265' = "Config.Etc.issue";
+'V-239285' = "Config.HostAgent.log.level"; 'V-239286' = "Security.PasswordQualityControl";
+'V-239287' = "Security.PasswordHistory"; 'V-239289' = "Config.HostAgent.plugins.solo.enableMob";
+'V-239294' = "Config.HostAgent.plugins.hostsvc.esxAdminsGroup"; 'V-239296' = "serVars.ESXiShellInteractiveTimeOut";
+'V-239297' = "UserVars.ESXiShellTimeOut": 'V-239298' = "UserVars.DcuiTimeOut";
+'V-239309' = "Mem.ShareForceSalting"; 'V-239312' = "Net.BlockGuestBPDU";
+'V-239316' = "Net.DVFilterBindIpAddress"; 'V-239326' = "UserVars.ESXiVPsDisabledProtocols";
+'V-239329' = "UserVars.SuppressShellWarning"; 'V-239330' = "Syslog.global.logHost"
 
 V-239258 Get-VMHost | Select Name,@{N="Lockdown";E={$_.Extensiondata.Config.LockdownMode}}
 V-239290 Get-VMHost | Get-VMHostService | Where {$_.Label -eq "SSH"}
