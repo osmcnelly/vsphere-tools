@@ -1,0 +1,72 @@
+V-239259 DCUI.Access
+V-239261 Syslog.global.logHost
+V-239262 Security.AccountLockFailures
+V-239263 Annotations.WelcomeMessage
+V-239264 Config.Etc.issue
+v-239265 Config.Etc.issue
+V-239285 Config.HostAgent.log.level
+V-239286 Security.PasswordQualityControl
+V-239287 Security.PasswordHistory
+V-239289 Config.HostAgent.plugins.solo.enableMob
+V-239294 Config.HostAgent.plugins.hostsvc.esxAdminsGroup
+V-239296 serVars.ESXiShellInteractiveTimeOut
+V-239297 UserVars.ESXiShellTimeOut
+V-239298 UserVars.DcuiTimeOut
+V-239309 Mem.ShareForceSalting
+V-239312 Net.BlockGuestBPDU
+V-239316 Net.DVFilterBindIpAddress
+V-239326 UserVars.ESXiVPsDisabledProtocols
+V-239329 UserVars.SuppressShellWarning
+V-239330 Syslog.global.logHost
+
+V-239258 Get-VMHost | Select Name,@{N="Lockdown";E={$_.Extensiondata.Config.LockdownMode}}
+V-239290 Get-VMHost | Get-VMHostService | Where {$_.Label -eq "SSH"}
+V-239291 Get-VMHost | Get-VMHostService | Where {$_.Label -eq "ESXi Shell"}
+V-239307 Get-VMHostSnmp | Select *
+V-239308 Get-VMHost | Get-VMHostHba | Where {$_.Type -eq "iscsi"} | Select AuthenticationProperties -ExpandProperty AuthenticationProperties
+V-239310 Get-VMHost | Get-VMHostFirewallException | Where {$_.Enabled -eq $true} | Select Name,Enabled,@{N="AllIPEnabled";E={$_.ExtensionData.AllowedHosts.AllIP}}
+V-239311 Get-VMHostFirewallDefaultPolicy
+V-239313/314/315 Get-VirtualSwitch | Get-SecurityPolicy
+		 Get-VirtualPortGroup | Get-SecurityPolicy
+V-239317/318/319 Get-VirtualPortGroup | Select Name, VLanId
+
+
+V-239260 $vmhost = Get-VMHost | Get-View
+	     $lockdown = Get-View $vmhost.ConfigManager.HostAccessManager
+		 $lockdown.QueryLockdownExceptions()
+
+$esxcli = Get-EsxCli -v2
+V-239267 $esxcli.system.security.fips140.ssh.get.invoke()
+V-239299 $esxcli.system.coredump.partition.get.Invoke()
+		 $esxcli.system.coredump.network.get.Invoke()
+V-239302 $esxcli.software.acceptance.get.Invoke()
+		 
+		 
+V-239301 Get-VMHost | Get-VMHostNTPServer
+		 Get-VMHost | Get-VMHostService | Where {$_.Label -eq "NTP Daemon"}
+
+
+
+V-239266 grep -i "^Banner" /etc/ssh/sshd_config
+V-239268 grep -i "^IgnoreRhosts" /etc/ssh/sshd_config
+V-239269 grep -i "^HostbasedAuthentication" /etc/ssh/sshd_config
+V-239270 grep -i "^PermitRootLogin" /etc/ssh/sshd_config
+V-239271 grep -i "^PermitEmptyPasswords" /etc/ssh/sshd_config
+V-239272 grep -i "^PermitUserEnvironment" /etc/ssh/sshd_config
+V-239273 grep -i "^GSSAPIAuthentication" /etc/ssh/sshd_config
+V-239274 grep -i "^KerberosAuthentication" /etc/ssh/sshd_config
+V-239275 grep -i "^StrictModes" /etc/ssh/sshd_config
+V-239276 grep -i "^Compression" /etc/ssh/sshd_config
+V-239277 grep -i "^GatewayPorts" /etc/ssh/sshd_config
+V-239278 grep -i "^X11Forwarding" /etc/ssh/sshd_config
+V-239279 grep -i "^AcceptEnv" /etc/ssh/sshd_config
+V-239280 grep -i "^PermitTunnel" /etc/ssh/sshd_config
+V-239281 grep -i "^ClientAliveCountMax" /etc/ssh/sshd_config
+V-239282 grep -i "^ClientAliveInterval" /etc/ssh/sshd_config
+V-239283 grep -i "^MaxSessions" /etc/ssh/sshd_config
+V-239288 grep -i "^password" /etc/pam.d/passwd | grep sufficient
+V-239331 grep -i "^Ciphers" /etc/ssh/sshd_config
+
+V-239284 cat /etc/ssh/keys-root/authorized_keys
+
+V-239327 /usr/lib/vmware/secureboot/bin/secureBoot.py -s
