@@ -21,7 +21,11 @@ if ($null -eq $serverList){
 # Variables
 $Date = Get-Date
 $Datefile = ($Date).ToString("yyyy-MM-dd-hhmmss")
+<<<<<<< HEAD
 #$ErrorActionPreference = "SilentlyContinue"
+=======
+$ErrorActionPreference = "SilentlyContinue"
+>>>>>>> 785117377df1627981529a6918e5835668af8282
 $ESXiList = @()
 $csvPath = Join-Path $ParentDir -ChildPath "\Reports\VSPHERE_ESXI_REPORT_$Datefile.csv"
 
@@ -47,11 +51,16 @@ $settings = [ordered]@{
 }
 
 # Gather settings and write them to the CSV file
+<<<<<<< HEAD
 Write-Host "Gathering ESXi Settings" -ForegroundColor Yellow
+=======
+Write-Host "Gathering ESXi Settings"
+>>>>>>> 785117377df1627981529a6918e5835668af8282
 
 # Using 'Get-AdvancedSetting' to gather the settings for the ESXi, then outputting the results to the CSV report
 $Settings.GetEnumerator() | ForEach-Object {
 	$vid = $($_.Key)
+<<<<<<< HEAD
 	$report = Get-VMHost | Get-AdvancedSetting -name $($_.Value) |`
 	 Select-Object @{N="VID";E={$vid}},@{N='Host';E={$server}},Name,Value
 
@@ -127,3 +136,36 @@ $nonstandardSettings.GetEnumerator() | ForEach-Object {
 	Write-Output "------------------------------------------------------ `n${vid}:`n------------------------------------------------------ " | Out-File -append $scriptdir\..\Reports\esxipowercliresults.txt
 	$report | Out-File -Append $scriptdir\..\Reports\esxipowercliresults.txt
 }
+=======
+	foreach($ESXi in $ESXiList){
+		$report = Get-VMHost $ESXi | Get-AdvancedSetting -name $($_.Value) |`
+		 Select-Object @{N="VID";E={$vid}},@{N='Host';E={$ESXi}},Name,Value
+
+		# If setting returns null, update the csv to reflect that instead of dropping the $null value
+		if (!$report){ 
+			New-Object -TypeName PSCustomObject -Property @{
+			VID = $($_.Key)
+			Host = $ESXi
+			Name = $($_.Value)
+			Value = "Setting not present"
+			}| Export-CSV -LiteralPath $FileCSV -NoTypeInformation -append -UseCulture
+		}
+		# Output returned setting values to the CSV
+		if ($GridView -eq "yes"){
+			$report | Export-CSV -LiteralPath $FileCSV -NoTypeInformation -append -UseCulture
+		}
+		if ($CreateCSV -eq "yes"){
+			$report | Export-CSV -LiteralPath $FileCSV -NoTypeInformation -append -UseCulture
+		}
+	}
+}
+
+$ESXiIP = ""
+$ESXiIP = Read-Host -Prompt "Please entire the ESXi IP"
+
+# Use SCP to transfer the script to the ESXi
+scp $scriptdir\..\configcheck.sh root@ESXiIP:/configcheck.sh
+
+# Run shell script via ssh
+ssh -t root@$ESXiIP 'bash /configcheck.sh'
+>>>>>>> 785117377df1627981529a6918e5835668af8282

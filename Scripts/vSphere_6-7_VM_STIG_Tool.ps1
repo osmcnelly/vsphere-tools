@@ -24,7 +24,7 @@ $Date = Get-Date
 $Datefile = ($Date).ToString("yyyy-MM-dd-hhmmss")
 $ErrorActionPreference = "SilentlyContinue"
 $VMList = @()
-$csvPath = Join-Path $ParentDir -ChildPath "\Reports\VSPHERE_REPORT_$Datefile.csv"
+$csvPath = Join-Path $ParentDir -ChildPath "\Reports\VSPHERE_VM_REPORT_$Datefile.csv"
 
 # Create empty CSV report
 $FileCSV = New-Item -Type File -Path \..\$csvPath
