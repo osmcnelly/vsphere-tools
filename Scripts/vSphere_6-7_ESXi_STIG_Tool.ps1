@@ -21,11 +21,7 @@ if ($null -eq $serverList){
 # Variables
 $Date = Get-Date
 $Datefile = ($Date).ToString("yyyy-MM-dd-hhmmss")
-<<<<<<< HEAD
-#$ErrorActionPreference = "SilentlyContinue"
-=======
 $ErrorActionPreference = "SilentlyContinue"
->>>>>>> 785117377df1627981529a6918e5835668af8282
 $ESXiList = @()
 $csvPath = Join-Path $ParentDir -ChildPath "\Reports\VSPHERE_ESXI_REPORT_$Datefile.csv"
 
@@ -51,11 +47,7 @@ $settings = [ordered]@{
 }
 
 # Gather settings and write them to the CSV file
-<<<<<<< HEAD
 Write-Host "Gathering ESXi Settings" -ForegroundColor Yellow
-=======
-Write-Host "Gathering ESXi Settings"
->>>>>>> 785117377df1627981529a6918e5835668af8282
 
 # Using 'Get-AdvancedSetting' to gather the settings for the ESXi, then outputting the results to the CSV report
 $Settings.GetEnumerator() | ForEach-Object {
