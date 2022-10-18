@@ -11,7 +11,7 @@ function VSphereConnect {
 	
 	Connect-VIServer $server -Credential $Credentials -ErrorAction Inquire > $null
 
-	$serverName = $global:DefaultVIServer | select -expandproperty name
+	$serverName = $global:DefaultVIServer | Select-Object -expandproperty name
 	if(!$serverName){
 		Write-Host ">>> ERROR: Unable to connect to $server." -ForegroundColor Red
 		BREAK
