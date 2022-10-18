@@ -22,7 +22,6 @@ if ($null -eq $serverList){
 $Date = Get-Date
 $Datefile = ($Date).ToString("yyyy-MM-dd-hhmmss")
 $ErrorActionPreference = "SilentlyContinue"
-$ESXiList = @()
 $csvPath = Join-Path $ParentDir -ChildPath "\Reports\VSPHERE_ESXI_REPORT_$Datefile.csv"
 
 # Create empty CSV report
@@ -52,7 +51,6 @@ Write-Host "Gathering ESXi Settings" -ForegroundColor Yellow
 # Using 'Get-AdvancedSetting' to gather the settings for the ESXi, then outputting the results to the CSV report
 $Settings.GetEnumerator() | ForEach-Object {
 	$vid = $($_.Key)
-<<<<<<< HEAD
 	$report = Get-VMHost | Get-AdvancedSetting -name $($_.Value) |`
 	 Select-Object @{N="VID";E={$vid}},@{N='Host';E={$server}},Name,Value
 
@@ -81,17 +79,17 @@ $Settings.GetEnumerator() | ForEach-Object {
 # Use SCP to transfer the script to the ESXi
 Write-Host "`n>>> ENTER THE SSH PASSWORD TO TRANSFER CONFIGCHECK.SH TO THE TARGET HOST`n" -ForegroundColor Cyan
 scp $scriptdir\..\configcheck.sh root@${server}:/configcheck.sh
-clear
+Clear-Host
 
 # Run shell script via ssh
 Write-Host "`n>>> ENTER THE SSH PASSWORD TO RUN CONFIGCHECK.SH ON THE TARGET HOST`n" -ForegroundColor Cyan
 ssh -t root@$server 'sh /configcheck.sh'
-clear
+Clear-Host
 
 # Transfer the results back to the Scripts folder
 Write-Host "`n>>> ENTER THE SSH PASSWORD TO TRANSFER CONFIGCHECKRESULTS FROM THE TARGET HOST`n" -ForegroundColor Cyan
 scp root@${server}:/configcheckout $scriptdir\..\Reports\grepresults.txt
-clear
+Clear-Host
 
 Write-Host "`nChecking remaining ESXi Settings" -ForegroundColor Yellow
 
@@ -102,22 +100,22 @@ $vmhost = Get-VMHost | Get-View
 $lockdown = Get-View $vmhost.ConfigManager.HostAccessManager
 
 $nonstandardsettings = [ordered]@{
-	'V-239258' = Get-VMHost | Select Name,@{N="Lockdown";E={$_.Extensiondata.Config.LockdownMode}};
+	'V-239258' = Get-VMHost | Select-Object Name,@{N="Lockdown";E={$_.Extensiondata.Config.LockdownMode}};
 	'V-239260' = $lockdown.QueryLockdownExceptions(); 
     'V-239267' = $esxcli.system.security.fips140.ssh.get.invoke(); 
-	'V-239290' = Get-VMHost | Get-VMHostService | Where {$_.Label -eq "SSH"}; 
-	'V-239291' = Get-VMHost | Get-VMHostService | Where {$_.Label -eq 'ESXi Shell'}; 'V-239307' = Get-VMHostSnmp | Select *; 
+	'V-239290' = Get-VMHost | Get-VMHostService | Where-Object {$_.Label -eq "SSH"}; 
+	'V-239291' = Get-VMHost | Get-VMHostService | Where-Object {$_.Label -eq 'ESXi Shell'}; 'V-239307' = Get-VMHostSnmp | Select-Object *; 
 	'V-239299' = $esxcli.system.coredump.partition.get.Invoke();
     'V-239299_2' = $esxcli.system.coredump.network.get.Invoke(); 	
 	'V-239301' = Get-VMHost | Get-VMHostNTPServer; 
-	'V-239301_2' = Get-VMHost | Get-VMHostService | Where {$_.Label -eq "NTP Daemon"};
+	'V-239301_2' = Get-VMHost | Get-VMHostService | Where-Object {$_.Label -eq "NTP Daemon"};
 	'V-239302' = $esxcli.software.acceptance.get.Invoke();
-	'V-239308' = Get-VMHost | Get-VMHostHba | Where {$_.Type -eq 'iscsi'} | Select AuthenticationProperties -ExpandProperty AuthenticationProperties;
-    'V-239310' = Get-VMHost | Get-VMHostFirewallException | Where {$_.Enabled -eq $true} | Select Name,Enabled,@{N="AllIPEnabled";E={$_.ExtensionData.AllowedHosts.AllIP}}; 
+	'V-239308' = Get-VMHost | Get-VMHostHba | Where-Object {$_.Type -eq 'iscsi'} | Select-Object AuthenticationProperties -ExpandProperty AuthenticationProperties;
+    'V-239310' = Get-VMHost | Get-VMHostFirewallException | Where-Object {$_.Enabled -eq $true} | Select-Object Name,Enabled,@{N="AllIPEnabled";E={$_.ExtensionData.AllowedHosts.AllIP}}; 
 	'V-239311' = Get-VMHostFirewallDefaultPolicy;
     'V-239313/314/315' = Get-VirtualSwitch | Get-SecurityPolicy;
     'V-239313/314/315_2' = Get-VirtualPortGroup | Get-SecurityPolicy; 
-	'V-239317/318/319' = Get-VirtualPortGroup | Select Name, VLanId
+	'V-239317/318/319' = Get-VirtualPortGroup | Select-Object Name, VLanId
 }
 
 $nonstandardSettings.GetEnumerator() | ForEach-Object {
@@ -128,36 +126,3 @@ $nonstandardSettings.GetEnumerator() | ForEach-Object {
 	Write-Output "------------------------------------------------------ `n${vid}:`n------------------------------------------------------ " | Out-File -append $scriptdir\..\Reports\esxipowercliresults.txt
 	$report | Out-File -Append $scriptdir\..\Reports\esxipowercliresults.txt
 }
-=======
-	foreach($ESXi in $ESXiList){
-		$report = Get-VMHost $ESXi | Get-AdvancedSetting -name $($_.Value) |`
-		 Select-Object @{N="VID";E={$vid}},@{N='Host';E={$ESXi}},Name,Value
-
-		# If setting returns null, update the csv to reflect that instead of dropping the $null value
-		if (!$report){ 
-			New-Object -TypeName PSCustomObject -Property @{
-			VID = $($_.Key)
-			Host = $ESXi
-			Name = $($_.Value)
-			Value = "Setting not present"
-			}| Export-CSV -LiteralPath $FileCSV -NoTypeInformation -append -UseCulture
-		}
-		# Output returned setting values to the CSV
-		if ($GridView -eq "yes"){
-			$report | Export-CSV -LiteralPath $FileCSV -NoTypeInformation -append -UseCulture
-		}
-		if ($CreateCSV -eq "yes"){
-			$report | Export-CSV -LiteralPath $FileCSV -NoTypeInformation -append -UseCulture
-		}
-	}
-}
-
-$ESXiIP = ""
-$ESXiIP = Read-Host -Prompt "Please entire the ESXi IP"
-
-# Use SCP to transfer the script to the ESXi
-scp $scriptdir\..\configcheck.sh root@ESXiIP:/configcheck.sh
-
-# Run shell script via ssh
-ssh -t root@$ESXiIP 'bash /configcheck.sh'
->>>>>>> 785117377df1627981529a6918e5835668af8282
