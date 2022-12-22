@@ -40,7 +40,7 @@ $settings = [ordered]@{
     'V-239336' = "isolation.tools.diskwiper.disable"; 'V-239338' = "isolation.tools.hgfsServerSet.disable"; 
 	'V-239344' = "RemoteDisplay.maxConnections"; 'V-239345' = "RemoteDisplay.vnc.enabled"; 
 	'V-239346' = "tools.setinfo.sizeLimit"; 'V-239347' = "isolation.device.connectable.disable"; 
-	'V-239348' = "tools.guestlib.enableHostInf"; 'V-239349' = "sched.mem.pshare.salt"; 
+	'V-239348' = "tools.guestlib.enableHostInfo"; 'V-239349' = "sched.mem.pshare.salt"; 
 	'V-239350' = "ethernet*.filter*.name*"; 'V-239353' = "tools.guest.desktop.autolock"; 
 	'V-239354' = "mks.enable3d"
 }
