@@ -25,5 +25,5 @@ You can verify that the PowerCLI module is available by using the following comm
 `Get-Module -Name VMware.PowerCLI* -ListAvailable` 
 
 ## Usage
-From a Powershell 5.0 terminal, specify the path to the script you would like to run. Scripts that generate reports 
+From a Powershell 5.1 terminal, specify the path to the script you would like to run. Scripts that generate reports 
 or other output will automatically create any necessary files and directories at runtime. 
