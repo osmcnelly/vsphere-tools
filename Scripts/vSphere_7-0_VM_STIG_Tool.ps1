@@ -1,4 +1,4 @@
-﻿# This script retrieves the advanced setting specified by the vSphere 6.7 STIG released by DISA. 
+﻿# This script retrieves the advanced setting specified by the vSphere 7.0 STIG released by DISA. 
 # The script outputs the vm name, vulnerability ID, associated setting name, and setting status in CSV format.
 
 # Relative Directory mapping
