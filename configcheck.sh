@@ -1,7 +1,7 @@
 #! /bin/sh
 
 > ~/configcheckout
-Settings="Banner,IgnoreRhosts,HostbasedAuthentication,PermitRootLogin,PermitEmptyPasswords.PermitUserEnvironment,GSSAPIAuthentication,KerberosAuthentication,StrictModes,Compression,GatewayPorts,X11Forwarding,AcceptEnv,PermitTunnel,ClientAliveCountMax,ClientAliveInterval,MaxSessions,Ciphers"
+Settings="Banner,IgnoreRhosts,HostbasedAuthentication,PermitRootLogin,PermitEmptyPasswords,PermitUserEnvironment,GSSAPIAuthentication,KerberosAuthentication,StrictModes,Compression,GatewayPorts,X11Forwarding,AcceptEnv,PermitTunnel,ClientAliveCountMax,ClientAliveInterval,MaxSessions,Ciphers"
 
 Field_Separator=$IFS
 IFS=,

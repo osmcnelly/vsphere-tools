@@ -21,7 +21,8 @@ if ($null -eq $serverList){
 # Variables
 $Date = Get-Date
 $Datefile = ($Date).ToString("yyyy-MM-dd-hhmmss")
-$ErrorActionPreference = "SilentlyContinue"
+#$ErrorActionPreference = "SilentlyContinue"
+#$ESXiList = @()
 $csvPath = Join-Path $ParentDir -ChildPath "\Reports\VSPHERE_ESXI_REPORT_$Datefile.csv"
 
 # Create empty CSV report
