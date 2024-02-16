@@ -1,14 +1,22 @@
-function createSnapshot($vm){
-	$Date = Get-Date
-	$Dateformat = ($Date).ToString("yyyy-MM-dd-hhmmss")
-	try{
-		Write-Host "Creating new snapshot for $vm"
-		Get-VM $vm | New-Snapshot -name "$vm Daily Snapshot $Dateformat"`
-		 -confirm:$false -description "Created with VM-Tools script" -memory:$false -quiesce:$false -RunAsync:$true
-		Write-Host -foregroundcolor "Green" "`nDone."
-	}
-	catch{
-		Write-Host -foregroundcolor RED -backgroundcolor BLACK`
-		"Error creating new snapshot. See VCenter log for details."
-	}
+function New-Snapshot {
+    param (
+        [string]$VMName
+    )
+
+    $Date = Get-Date
+    $DateFormat = $Date.ToString("yyyy-MM-dd-HHmmss")
+
+    try {
+        Write-Host "Creating a new snapshot for $VMName"
+        Get-VM $VMName | New-Snapshot -Name "$VMName Daily Snapshot $DateFormat" `
+            -Confirm:$false -Description "Created with VM-Tools script" -Memory:$false -Quiesce:$false -RunAsync:$true
+        Write-Host -ForegroundColor Green "`nDone."
+    }
+    catch {
+        Write-Host -ForegroundColor Red -BackgroundColor Black "Error creating a new snapshot. $_"
+        # Log the error or take additional actions if needed
+    }
 }
+
+# Example of usage
+# New-Snapshot -VMName "YourVMName"

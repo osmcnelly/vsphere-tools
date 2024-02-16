@@ -1,45 +1,53 @@
-$scriptdir = $PSScriptRoot
-#$ParentDir = (Get-Item $scriptdir).parent 
+$ScriptDir = $PSScriptRoot
 
-Import-Module $scriptdir\..\modules\vSphereConnect
-Import-Module $scriptdir\..\modules\GetVMNames
-Import-Module $scriptdir\..\modules\VMMaintenanceFunctions
+# Import modules
+Import-Module "$ScriptDir\..\modules\vSphereConnect"
+Import-Module "$ScriptDir\..\modules\GetVMNames"
+Import-Module "$ScriptDir\..\modules\VMMaintenanceFunctions"
 
-$serverList = $global:DefaultVIServer
+# Check if connected to the server
+$connectedVIServers = $global:DefaultVIServer
 
-if ($null -eq $serverList){
-	Write-Host ">>> Not connected to server."
-	Write-Host ">>> Initializing PowerCLI Session. Please wait."
-	VSphereConnect
+if ($null -eq $connectedVIServers) {
+    Write-Host ">>> Not connected to the server."
+    Write-Host ">>> Initializing PowerCLI Session. Please wait."
+    
+    $Server, $Username, $Password = Get-VSphereCredentials
+    Connect-VSphere -Server $Server -Username $Username -Password $Password
 }
 
+# Set ErrorActionPreference for the critical operation
+$ErrorActionPreference = "Stop"
+
 # Variables
-#$Date = Get-Date
-#$Datefile = ($Date).ToString("yyyy-MM-dd-hhmmss")
-$ErrorActionPreference = "SilentlyContinue"
 $VMList = @()
 
+# Get user's choice
 $Choice = ''
-$ValidChoiceList = @(
-	1
-    2
-)
+$ValidChoiceList = 1, 2
 
-while ([string]::IsNullOrEmpty($Choice)){
+while ([string]::IsNullOrEmpty($Choice)) {
     $Choice = Read-Host "Enter [1] to select all VMs. Enter [2] to specify VMs"
-    if ($Choice -notin $ValidChoiceList){
-        Write-Warning ('Your choice [ {0} ] is not valid.' -f $Choice)
-        Write-Warning '    Please try again & choose "1" or "2".'
 
+    if (![int]::TryParse($Choice, [ref]$null) -or $Choice -notin $ValidChoiceList) {
+        Write-Warning "Your choice [$Choice] is not valid. Please try again & choose '1' or '2'."
         $Choice = ''
         pause
     }
-    switch ($Choice){
-		1 {$VMList += Get-VM -Name *; break}
-		2 {$VMList = GetVMNames; break}
+
+    switch ($Choice) {
+        1 { $VMList += Get-VM -Name *; break }
+        2 { $VMList = Get-VMNames; break }
     }
 }
 
-forEach ($vm in $VMList)
-	{createSnapshot($vm)
+# Create snapshots for each VM in the list
+foreach ($vm in $VMList) {
+    try {
+        New-Snapshot -VMName $vm
+    }
+    catch {
+        Write-Host "Error creating snapshot for $vm. $_" -ForegroundColor Red
+        # Log the error or take additional actions if needed
+    }
 }

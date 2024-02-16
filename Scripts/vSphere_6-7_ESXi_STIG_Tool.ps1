@@ -2,38 +2,34 @@
 # The script outputs the vm name, vulnerability ID, associated setting name, and setting status in CSV format.
 
 # Relative Directory mapping
-$scriptdir = $PSScriptRoot
-$ParentDir = (Get-Item $scriptdir).parent 
+$ScriptDir = $PSScriptRoot
+$ParentDir = (Get-Item $ScriptDir).Parent 
 
-Import-Module $scriptdir\..\modules\vSphereConnect
-Import-Module $scriptdir\..\modules\CreateReportDirectory
+# Import custom modules
+Import-Module "$ScriptDir\..\modules\vSphereConnect"
+Import-Module "$ScriptDir\..\modules\CreateReportDirectory"
 
-CreateReportDir
+# Create a new report directory
+New-ReportDir
 
-$serverList = $global:DefaultVIServer
+# Check if connected to the server
+$ConnectedVIServers = $global:DefaultVIServer
 
-if ($null -eq $serverList){
-	Write-Host ">>> Not connected to server." -ForegroundColor Red
-	Write-Host ">>> Initializing PowerCLI Session. Please wait." -ForegroundColor Cyan
-	VSphereConnect
+if ($null -eq $ConnectedVIServers) {
+    Write-Host ">>> Not connected to the server." -ForegroundColor Red
+    Write-Host ">>> Initializing PowerCLI Session. Please wait." -ForegroundColor Cyan
+    $Server, $Username, $Password = Get-VSphereCredentials
+    Connect-VSphere -Server $Server -Username $Username -Password $Password
 }
 
 # Variables
 $Date = Get-Date
-$Datefile = ($Date).ToString("yyyy-MM-dd-hhmmss")
-#$ErrorActionPreference = "SilentlyContinue"
-#$ESXiList = @()
-$csvPath = Join-Path $ParentDir -ChildPath "\Reports\VSPHERE_ESXI_REPORT_$Datefile.csv"
+$Datefile = $Date.ToString("yyyy-MM-dd-hhmmss")
+$CsvPath = Join-Path $ParentDir -ChildPath "\Reports\VSPHERE_ESXI_REPORT_$Datefile.csv"
 
-# Create empty CSV report
-$FileCSV = New-Item -Type File -Path \..\$csvPath
-
-# Variable to Change
-$CreateCSV = "yes"
-$GridView = "no"
-
-# Ordered hashtable of settings to check on ESXi. Each setting's key is its respective vuln ID on the STIG checklist
-$settings = [ordered]@{
+# Create empty CSV report using Export-Csv
+$FileCsv = New-Item -Type File -Path $CsvPath
+$Settings = [ordered]@{
     'V-239259' = "DCUI.Access"; 'V-239261' = "Syslog.global.logHost";
     'V-239262' = "Security.AccountLockFailures"; 'V-239263' = "Annotations.WelcomeMessage";
     'V-239264' = "Config.Etc.issue"; 'V-239265' = "Config.Etc.issue";
@@ -51,26 +47,24 @@ Write-Host "Gathering ESXi Settings" -ForegroundColor Yellow
 
 # Using 'Get-AdvancedSetting' to gather the settings for the ESXi, then outputting the results to the CSV report
 $Settings.GetEnumerator() | ForEach-Object {
-	$vid = $($_.Key)
-	$report = Get-VMHost | Get-AdvancedSetting -name $($_.Value) |`
-	 Select-Object @{N="VID";E={$vid}},@{N='Host';E={$server}},Name,Value
+    $Vid = $_.Key
+    $Report = Get-VMHost | Get-AdvancedSetting -Name $_.Value | `
+        Select-Object @{N="VID";E={$Vid}}, @{N='Host';E={$Server}}, Name, Value
 
-	# If setting returns null, update the csv to reflect that instead of dropping the $null value
-	if (!$report){ 
-		New-Object -TypeName PSCustomObject -Property @{
-		VID = $($_.Key)
-		Host = $server
-		Name = $($_.Value)
-		Value = "Setting not present"
-		}| Export-CSV -LiteralPath $FileCSV -NoTypeInformation -append -UseCulture
-	}
-	# Output returned setting values to the CSV
-	if ($GridView -eq "yes"){
-		$report | Export-CSV -LiteralPath $FileCSV -NoTypeInformation -append -UseCulture
-	}
-	if ($CreateCSV -eq "yes"){
-		$report | Export-CSV -LiteralPath $FileCSV -NoTypeInformation -append -UseCulture
-	}
+    # If setting returns null, update the csv to reflect that instead of dropping the $null value
+    if (!$Report) { 
+        New-Object -TypeName PSCustomObject -Property @{
+            VID   = $Vid
+            Host  = $Server
+            Name  = $_.Value
+            Value = "Setting not present"
+        } | Export-Csv -LiteralPath $FileCsv -NoTypeInformation -Append -UseCulture -Force
+    }
+
+    # Output returned setting values to the CSV
+    if ($GridView -eq "yes" -or $CreateCSV -eq "yes") {
+        $Report | Export-Csv -LiteralPath $FileCsv -NoTypeInformation -Append -UseCulture -Force
+    }
 }
 
 # A number of the 'Check Text' statements ask the ISSE to use grep via ssh to check configuration within the sshd_config file and 
@@ -89,41 +83,42 @@ Clear-Host
 
 # Transfer the results back to the Scripts folder
 Write-Host "`n>>> ENTER THE SSH PASSWORD TO TRANSFER CONFIGCHECKRESULTS FROM THE TARGET HOST`n" -ForegroundColor Cyan
-scp root@${server}:/configcheckout $scriptdir\..\Reports\grepresults.txt
+scp root@${Server}:/configcheckout $ScriptDir\..\Reports\grepresults.txt
 Clear-Host
 
 Write-Host "`nChecking remaining ESXi Settings" -ForegroundColor Yellow
 
 # Non-standardized PowerCLI CKL Items
 # These items are output to esxipowercliresults.txt. The ISSE can compare the results to the requirements listed in the STIG. 
-$esxcli = Get-EsxCli -v2
-$vmhost = Get-VMHost | Get-View
-$lockdown = Get-View $vmhost.ConfigManager.HostAccessManager
+$Esxcli = Get-EsxCli -v2
+$Vmhost = Get-VMHost | Get-View
+$Lockdown = Get-View $Vmhost.ConfigManager.HostAccessManager
 
-$nonstandardsettings = [ordered]@{
-	'V-239258' = Get-VMHost | Select-Object Name,@{N="Lockdown";E={$_.Extensiondata.Config.LockdownMode}};
-	'V-239260' = $lockdown.QueryLockdownExceptions(); 
-    'V-239267' = $esxcli.system.security.fips140.ssh.get.invoke(); 
-	'V-239290' = Get-VMHost | Get-VMHostService | Where-Object {$_.Label -eq "SSH"}; 
-	'V-239291' = Get-VMHost | Get-VMHostService | Where-Object {$_.Label -eq 'ESXi Shell'}; 'V-239307' = Get-VMHostSnmp | Select-Object *; 
-	'V-239299' = $esxcli.system.coredump.partition.get.Invoke();
-    'V-239299_2' = $esxcli.system.coredump.network.get.Invoke(); 	
-	'V-239301' = Get-VMHost | Get-VMHostNTPServer; 
-	'V-239301_2' = Get-VMHost | Get-VMHostService | Where-Object {$_.Label -eq "NTP Daemon"};
-	'V-239302' = $esxcli.software.acceptance.get.Invoke();
-	'V-239308' = Get-VMHost | Get-VMHostHba | Where-Object {$_.Type -eq 'iscsi'} | Select-Object AuthenticationProperties -ExpandProperty AuthenticationProperties;
+$NonStandardSettings = [ordered]@{
+    'V-239258' = Get-VMHost | Select-Object Name,@{N="Lockdown";E={$_.Extensiondata.Config.LockdownMode}};
+    'V-239260' = $Lockdown.QueryLockdownExceptions(); 
+    'V-239267' = $Esxcli.system.security.fips140.ssh.get.invoke(); 
+    'V-239290' = Get-VMHost | Get-VMHostService | Where-Object {$_.Label -eq "SSH"}; 
+    'V-239291' = Get-VMHost | Get-VMHostService | Where-Object {$_.Label -eq 'ESXi Shell'}; 
+    'V-239307' = Get-VMHostSnmp | Select-Object *; 
+    'V-239299' = $Esxcli.system.coredump.partition.get.Invoke();
+    'V-239299_2' = $Esxcli.system.coredump.network.get.Invoke(); 	
+    'V-239301' = Get-VMHost | Get-VMHostNTPServer; 
+    'V-239301_2' = Get-VMHost | Get-VMHostService | Where-Object {$_.Label -eq "NTP Daemon"};
+    'V-239302' = $Esxcli.software.acceptance.get.Invoke();
+    'V-239308' = Get-VMHost | Get-VMHostHba | Where-Object {$_.Type -eq 'iscsi'} | Select-Object AuthenticationProperties -ExpandProperty AuthenticationProperties;
     'V-239310' = Get-VMHost | Get-VMHostFirewallException | Where-Object {$_.Enabled -eq $true} | Select-Object Name,Enabled,@{N="AllIPEnabled";E={$_.ExtensionData.AllowedHosts.AllIP}}; 
-	'V-239311' = Get-VMHostFirewallDefaultPolicy;
+    'V-239311' = Get-VMHostFirewallDefaultPolicy;
     'V-239313/314/315' = Get-VirtualSwitch | Get-SecurityPolicy;
     'V-239313/314/315_2' = Get-VirtualPortGroup | Get-SecurityPolicy; 
-	'V-239317/318/319' = Get-VirtualPortGroup | Select-Object Name, VLanId
+    'V-239317/318/319' = Get-VirtualPortGroup | Select-Object Name, VLanId
 }
 
-$nonstandardSettings.GetEnumerator() | ForEach-Object {
-	$vid = $($_.Key)
-	$report = $($_.Value)
-	
-	# Output returned setting values to text file
-	Write-Output "------------------------------------------------------ `n${vid}:`n------------------------------------------------------ " | Out-File -append $scriptdir\..\Reports\esxipowercliresults.txt
-	$report | Out-File -Append $scriptdir\..\Reports\esxipowercliresults.txt
+$NonStandardSettings.GetEnumerator() | ForEach-Object {
+    $Vid = $_.Key
+    $Report = $_.Value
+    
+    # Output returned setting values to text file
+    Write-Output "------------------------------------------------------ `n${Vid}:`n------------------------------------------------------ " | Out-File -Append $ScriptDir\..\Reports\esxipowercliresults.txt
+    $Report | Out-File -Append $ScriptDir\..\Reports\esxipowercliresults.txt
 }
