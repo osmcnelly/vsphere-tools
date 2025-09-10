@@ -1,7 +1,21 @@
 # vSphere Tools
 
-This is a collection of modules and scripts for automating tasks with PowerCLI.
+vSphere Tools is a scripted sollution that automates various VMWare STIG assessments.This tool is targeted towards cybersecurity professionals who frequently asses VMWare products(i,.e, vSphere ESXi, VCSA, and virtual machines) for security configuration compliant with DISA STIGs. 
 
+## Authors
+
+- [@osmcnelly](https://www.github.com/osmcnelly)
+
+
+## Deployment
+
+To deploy this project run
+
+```bash
+ git clone https://github.com/osmcnelly/vsphere-tools.git
+```
+
+Or download one of the published releases.
 ## Requirements
 - Powershell 5.1 
 - .NET Framework 4.7.2 or later
@@ -23,7 +37,3 @@ This is a collection of modules and scripts for automating tasks with PowerCLI.
 You can verify that the PowerCLI module is available by using the following command: 
     
 `Get-Module -Name VMware.PowerCLI* -ListAvailable` 
-
-## Usage
-From a Powershell 5.1 terminal, specify the path to the script you would like to run. Scripts that generate reports 
-or other output will automatically create any necessary files and directories at runtime. 
