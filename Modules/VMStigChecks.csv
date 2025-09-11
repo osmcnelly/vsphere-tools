@@ -1,0 +1,16 @@
+STIGID,VID,CheckType,CheckName,Expected,Expected2,Severity
+VMCH-80-000189,V-258703,AdvancedSetting,isolation.tools.copy.disable,true,low
+VMCH-80-000191,V-258704,AdvancedSetting,isolation.tools.dnd.disable,true,low
+VMCH-80-000192,V-258705,AdvancedSetting,isolation.tools.paste.disable,
+VMCH-80-000193,V-258706,AdvancedSetting,isolation.tools.diskShrink.disable,
+VMCH-80-000194,V-258707,AdvancedSetting,isolation.tools.diskWiper.disable,
+VMCH-80-000195,V-258708,AdvancedSetting,RemoteDisplay.maxConnections,
+VMCH-80-000196,V-258709,AdvancedSetting,tools.setinfo.sizeLimit,
+VMCH-80-000197,V-258710,AdvancedSetting,isolation.device.connectable.disable,
+VMCH-80-000198,V-258711,AdvancedSetting,tools.guestlib.enableHostInfo,
+VMCH-80-000199,V-258712,AdvancedSetting,sched.mem.pshare.salt,
+VMCH-80-000200,V-258713,AdvancedSetting,"ethernet*.filter*.name*",
+VMCH-80-000201,V-258714,AdvancedSetting,tools.guest.desktop.autolock,
+VMCH-80-000202,V-258715,AdvancedSetting,mks.enable3d,
+VMCH-80-000205,V-258718,AdvancedSetting,log.rotateSize,
+VMCH-80-000206,V-258719,AdvancedSetting,log.keepOld,
