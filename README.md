@@ -1,6 +1,6 @@
 # vSphere Tools
 
-vSphere Tools is a scripted sollution that automates various VMWare STIG assessments.This tool is targeted towards cybersecurity professionals who frequently asses VMWare products(i,.e, vSphere ESXi, VCSA, and virtual machines) for security configuration compliant with DISA STIGs. 
+vSphere Tools is a scripted solution that automates various VMWare STIG assessments.This tool is targeted towards cybersecurity professionals who frequently asses VMWare products(i,.e, vSphere ESXi, VCSA, and virtual machines) for security configuration compliant with DISA STIGs. 
 
 ## Authors
 
