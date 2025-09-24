@@ -24,12 +24,16 @@ function Invoke-EsxiStigChecks {
                 "FirewallDefaultPolicy"    { $results += Test-EsxiFirewallDefaultPolicy -Row $row -VMHost $VMHost }
                 "SshConfig"       { $results += Test-EsxiSshConfig -Row $row -VMHost $VMHost }
                 "SecureBoot"      { $results += Test-EsxiSecureBoot -Row $row -VMHost $VMHost }
-                "rhttpproxyDaemon" { $results += Test-rhttpproxyDaemon -Row $row -VMHost $VMHost}
-                "StrictX509Compliance" { $results += Test-StrictX509Compliance -Row $row -VMHost $VMHost}
-                "FirewallException" { $results += Test-EsxiFirewallException -Row $row -VMHost $VMHost}
-                "TpmMode" { $results += Test-EsxiTpmMode -Row $row -VMHost $VMHost}
-                "AuditRecords" { $results += Test-EsxiAuditRecords -Row $row -VMHost $VMHost}
-                "LockdownMode" { $results+= Test-EsxiLockdownMode -Row $row -VMHost $VMHost}
+                "SecureBoot2"      { $results += Test-EsxiSecureBoot2 -Row $row -VMHost $VMHost }
+                "rhttpproxyDaemon" { $results += Test-rhttpproxyDaemon -Row $row -VMHost $VMHost }
+                "StrictX509Compliance" { $results += Test-StrictX509Compliance -Row $row -VMHost $VMHost }
+                "FirewallException" { $results += Test-EsxiFirewallException -Row $row -VMHost $VMHost }
+                "TpmMode" { $results += Test-EsxiTpmMode -Row $row -VMHost $VMHost }
+                "AuditRecords" { $results += Test-EsxiAuditRecords -Row $row -VMHost $VMHost }
+                "LockdownMode" { $results += Test-EsxiLockdownMode -Row $row -VMHost $VMHost }
+                "SNMPStatus"    { $results += Test-SnmpStatus -Row $row -VMHost $VMHost } 
+                "LocalLogPersistent" { $results += Test-EsxiLocalLogPersistent -Row $row -VMHost $VMHost }
+                "LockdownModeExceptionUserList" { $results += Test-EsxiLockdownModeExceptionUserList -Row $row -VMHost $VMHost }
                 default {
                     $results += [PSCustomObject]@{
                         STIGID    = $row.STIGID
@@ -63,3 +67,4 @@ function Invoke-EsxiStigChecks {
 
     return $results
 }
+
