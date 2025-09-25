@@ -19,7 +19,7 @@ ESXI-70-000086,V-256438,AdvancedSetting,Syslog.global.logCheckSSLCerts,true,,med
 ESXI-70-000081,V-256433,AdvancedSetting,UserVars.SuppressHyperthreadWarning,0,,medium
 ESXI-70-000079,V-256432,AdvancedSetting,UserVars.SuppressShellWarning,0,,medium
 ESXI-70-000074,V-256429,AdvancedSetting,UserVars.ESXiVPsDisabledProtocols,"tlsv1,tlsv1.1,sslv3",,high
-ESXI-70-000062,V-256423,AdvancedSetting,Net.DVFilterBindIpAddress,,,medium
+ESXI-70-000062,V-256423,AdvancedSetting,"Net.DVFilterBindIpAddress | Select-Object -property Value",,,medium
 ESXI-70-000058,V-256419,AdvancedSetting,Net.BlockGuestBPDU,1,,medium
 ESXI-70-000055,V-256416,AdvancedSetting,Mem.ShareForceSalting,2,,Low 
 ESXI-70-000039,V-256404,AdvancedSetting,Config.HostAgent.plugins.hostsvc.esxAdminsGroup,ESX Admins,,medium

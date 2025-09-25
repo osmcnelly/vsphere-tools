@@ -1,0 +1,29 @@
+STIGID,VID,CheckType,CheckName,Expected,Expected2,Severity
+VMCH-70-000001,V-256450,AdvancedSetting,isolation.tools.copy.disable,TRUE,,low
+VMCH-70-000002,V-256451,AdvancedSetting,isolation.tools.dnd.disable,TRUE,,low
+VMCH-70-000003,V-256452,AdvancedSetting,isolation.tools.paste.disable,TRUE,,low
+VMCH-70-000004,V-256453,AdvancedSetting,isolation.tools.diskShrink.disable,TRUE,,medium
+VMCH-70-000005,V-256454,AdvancedSetting,solation.tools.diskWiper.disable,TRUE,,medium
+VMCH-70-000006,V-256455,VMPersistentDisk,VMPersistentDisk,Persistent,,medium
+VMCH-70-000007,V-256456,AdvancedSetting,isolation.tools.hgfsServerSet.disable,TRUE,,medium
+VMCH-70-000008,V-256457,UnneededFloppyDrives,UnneededFloppyDrives,,,medium
+VMCH-70-000009,V-256458,UnneededDiskDrives,UnneededDiskDrives,,,low
+VMCH-70-000010,V-256459,UnneededParallelDevices,UnneededParallelDevices,,,medium
+VMCH-70-000011,V-256460,UnneededSerialDevices,UnneededSerialDevices,,,medium
+VMCH-70-000012,V-256461,UnneededUSBDevices,UnneededUSBDevices,,,medium
+VMCH-70-000013,V-256462,AdvancedSetting,RemoteDisplay.maxConnections,1,,medium
+VMCH-70-000015,V-256463,AdvancedSetting,tools.setinfo.sizeLimit,1048576,,low
+VMCH-70-000016,V-256464,AdvancedSetting,isolation.device.connectable.disable,TRUE,,medium
+VMCH-70-000017,V-256465,AdvancedSetting,tools.guestlib.enableHostInfo,FALSE,,medium
+VMCH-70-000018,V-256466,AdvancedSetting,sched.mem.pshare.salt,,,low
+VMCH-70-000019,V-256467,AdvancedSetting,ethernet*.filter*.name*,,,low
+VMCH-70-000020,V-256468,HardenedPatchedTemplates,HardenedPatchedTemplates,Manually Review,,low
+VMCH-70-000021,V-256469,MinimizeVMConsoleUse,MinimizeVMConsoleUse,Manually Review,,medium
+VMCH-70-000022,V-256470,AdvancedSetting,tools.guest.desktop.autoloc,TRUE,,medium
+VMCH-70-000023,V-256471,AdvancedSetting,mks.enable3d,FALSE or does not exist,,low
+VMCH-70-000024,V-256472,vMotionEncryption,vMotionEncryption,Opportunistic,,medium
+VMCH-70-000025,V-256473,VMLogging,LoggingEnabled,Enabled,,medium
+VMCH-70-000026,V-256474,AdvancedSetting,log.rotateSize,2048000,,medium
+VMCH-70-000027,V-256475,AdvancedSetting,log.keepOld,10,,medium
+VMCH-70-000028,V-256476,AdvancedSetting,"'pciPassthru*.present' | Select Entity, Name, Value",,,medium
+VMCH-70-000029,V-256477,FTEncryption,FTEncryption,Opportunistic,,medium

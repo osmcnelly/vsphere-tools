@@ -67,4 +67,3 @@ function Invoke-EsxiStigChecks {
 
     return $results
 }
-

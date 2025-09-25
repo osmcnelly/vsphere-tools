@@ -1,22 +1,29 @@
-function Test-EsxiAdvancedSetting {
+function Test-VMAdvancedSetting {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][pscustomobject]$Row,
-        [Parameter(Mandatory)][string]$VMHost
+        # Accept either a VM object or a VM name
+        [Parameter(Mandatory)][object]$VM
     )
 
-    # Get-AdvancedSetting supports wildcards in -Name
-    $settings = Get-VMHost -Name $VMHost | Get-AdvancedSetting -Name $Row.CheckName -ErrorAction SilentlyContinue
+    # Normalize to VM object
+    if ($VM -isnot [VMware.VimAutomation.ViCore.Impl.V1.Inventory.VirtualMachineImpl]) {
+        $VM = Get-VM -Name $VM -ErrorAction Stop
+    }
 
-    $exp  = ($Row.Expected  | ForEach-Object { $_.ToString().Trim() })
-    $exp2 = ($Row.Expected2 | ForEach-Object { $_.ToString().Trim() })
+    # Get-AdvancedSetting supports wildcards in -Name for VMs when using -Entity
+    $settings = Get-AdvancedSetting -Entity $VM -Name $Row.CheckName -ErrorAction SilentlyContinue
 
+    $exp  = ($Row.Expected  | ForEach-Object { $_.ToString().Trim() })  # may be empty
+    $exp2 = ($Row.Expected2 | ForEach-Object { $_.ToString().Trim() })  # may be empty
+
+    # ---- Expected is blank => setting must NOT exist ----
     if ([string]::IsNullOrWhiteSpace($exp)) {
         if (-not $settings) {
             return [PSCustomObject]@{
                 STIGID   = $Row.STIGID
                 VID      = $Row.VID
-                VMHost   = $VMHost
+                VM       = $VM.Name
                 Check    = "AdvancedSetting: $($Row.CheckName)"
                 Expected = $Row.Expected
                 Actual   = "(setting not present)"
@@ -29,7 +36,7 @@ function Test-EsxiAdvancedSetting {
             return [PSCustomObject]@{
                 STIGID   = $Row.STIGID
                 VID      = $Row.VID
-                VMHost   = $VMHost
+                VM       = $VM.Name
                 Check    = "AdvancedSetting: $($Row.CheckName)"
                 Expected = $Row.Expected
                 Actual   = $actualVals
@@ -40,12 +47,13 @@ function Test-EsxiAdvancedSetting {
         }
     }
 
+    # ---- Special phrase: "FALSE or does not exist" ----
     if ($exp -match '^(?i:false\s+or\s+does\s+not\s+exist)$') {
         if (-not $settings) {
             return [PSCustomObject]@{
                 STIGID   = $Row.STIGID
                 VID      = $Row.VID
-                VMHost   = $VMHost
+                VM       = $VM.Name
                 Check    = "AdvancedSetting: $($Row.CheckName)"
                 Expected = $Row.Expected
                 Actual   = "(setting not present)"
@@ -59,7 +67,7 @@ function Test-EsxiAdvancedSetting {
         return [PSCustomObject]@{
             STIGID   = $Row.STIGID
             VID      = $Row.VID
-            VMHost   = $VMHost
+            VM       = $VM.Name
             Check    = "AdvancedSetting: $($Row.CheckName)"
             Expected = $Row.Expected
             Actual   = ($vals -join ', ')
@@ -69,11 +77,12 @@ function Test-EsxiAdvancedSetting {
         }
     }
 
+    # ---- Concrete Expected (and maybe Expected2) ----
     if (-not $settings) {
         return [PSCustomObject]@{
             STIGID   = $Row.STIGID
             VID      = $Row.VID
-            VMHost   = $VMHost
+            VM       = $VM.Name
             Check    = "AdvancedSetting: $($Row.CheckName)"
             Expected = $Row.Expected
             Actual   = "(setting not present)"
@@ -96,7 +105,7 @@ function Test-EsxiAdvancedSetting {
     [PSCustomObject]@{
         STIGID   = $Row.STIGID
         VID      = $Row.VID
-        VMHost   = $VMHost
+        VM       = $VM.Name
         Check    = "AdvancedSetting: $($Row.CheckName)"
         Expected = $Row.Expected
         Actual   = ($vals -join ', ')
