@@ -3,19 +3,19 @@ VMCH-80-000189,V-258703,AdvancedSetting,isolation.tools.copy.disable,TRUE,,low
 VMCH-80-000191,V-258704,AdvancedSetting,isolation.tools.dnd.disable,TRUE,,low
 VMCH-80-000192,V-258705,AdvancedSetting,isolation.tools.paste.disable,TRUE,,low
 VMCH-80-000193,V-258706,AdvancedSetting,isolation.tools.diskShrink.disable,TRUE,,medium
-VMCH-80-000194,V-258707,AdvancedSetting,solation.tools.diskWiper.disable,TRUE,,medium
+VMCH-80-000194,V-258707,AdvancedSetting,isolation.tools.diskWiper.disable,TRUE,,medium
 VMCH-80-000195,V-258708,AdvancedSetting,RemoteDisplay.maxConnections,1,,medium
 VMCH-80-000196,V-258709,AdvancedSetting,tools.setinfo.sizeLimit,1048576,,low
 VMCH-80-000197,V-258710,AdvancedSetting,isolation.device.connectable.disable,TRUE,,medium
 VMCH-80-000198,V-258711,AdvancedSetting,tools.guestlib.enableHostInfo,FALSE,,medium
 VMCH-80-000199,V-258712,AdvancedSetting,sched.mem.pshare.salt,,,low
 VMCH-80-000200,V-258713,AdvancedSetting,ethernet*.filter*.name*,,,low
-VMCH-80-000201,V-258714,AdvancedSetting,tools.guest.desktop.autoloc,TRUE,,medium
+VMCH-80-000201,V-258714,AdvancedSetting,tools.guest.desktop.autolock,TRUE,,medium
 VMCH-80-000202,V-258715,AdvancedSetting,mks.enable3d,FALSE or does not exist,,low
 VMCH-80-000203,V-258716,vMotionEncryption,vMotionEncryption,Opportunistic,,medium
 VMCH-80-000204,V-258717,FTEncryption,FTEncryption,Opportunistic,,medium
-VMCH-80-000205,V-258718,AdvancedSetting,log.rotateSize,2048000,,medium
-VMCH-80-000206,V-258719,AdvancedSetting,log.keepOld,10,,medium
+VMCH-80-000205,V-258718,AdvancedSetting,log.rotateSize,2048000 or does not exist,,medium
+VMCH-80-000206,V-258719,AdvancedSetting,log.keepOld,10 or does not exist,,medium
 VMCH-80-000207,V-258720,VMLogging,LoggingEnabled,Enabled,,medium
 VMCH-80-000208,V-258721,VMPersistentDisk,VMPersistentDisk,Persistent,,medium
 VMCH-80-000209,V-258722,UnneededFloppyDrives,UnneededFloppyDrives,,,medium
