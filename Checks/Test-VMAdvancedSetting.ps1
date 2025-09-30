@@ -48,44 +48,44 @@ function Test-VMAdvancedSetting {
     }
 
     # ---- Pattern: "<ExpectedValue> or does not exist" (case-insensitive) ----
-if ($exp -match '^(?i:(?<want>.+?)\s+or\s+does\s+not\s+exist)$') {
-    # Normalize the expected value (strip quotes, trim, uppercase for CI compare)
-    $want = $matches['want'].Trim().Trim("'`"").ToUpper()
+    if ($exp -match '^(?i:(?<want>.+?)\s+or\s+does\s+not\s+exist)$') {
+        # Normalize the expected value (strip quotes, trim, uppercase for CI compare)
+        $want = $matches['want'].Trim().Trim("'`"").ToUpper()
 
-    if (-not $settings) {
+        if (-not $settings) {
+            return [PSCustomObject]@{
+                STIGID    = $Row.STIGID
+                VID       = $Row.VID
+                VM        = $VM.Name
+                Check     = "AdvancedSetting: $($Row.CheckName)"
+                Expected  = $Row.Expected
+                Actual    = "(setting not present)"
+                Result    = "Pass"
+                Severity  = $Row.Severity
+                Timestamp = Get-Date
+            }
+        }
+
+        # Collect and normalize actual values
+        $vals = $settings |
+            ForEach-Object { [string]$_.Value } |
+            ForEach-Object { $_.Trim().Trim("'`"").ToUpper() }
+
+        # Pass only if ALL values match the expected value
+        $allMatch = ($vals | Where-Object { $_ -ne $want }).Count -eq 0
+
         return [PSCustomObject]@{
             STIGID    = $Row.STIGID
             VID       = $Row.VID
             VM        = $VM.Name
             Check     = "AdvancedSetting: $($Row.CheckName)"
             Expected  = $Row.Expected
-            Actual    = "(setting not present)"
-            Result    = "Pass"
+            Actual    = ($vals -join ', ')
+            Result    = if ($allMatch) { "Pass" } else { "Fail" }
             Severity  = $Row.Severity
             Timestamp = Get-Date
         }
     }
-
-    # Collect and normalize actual values
-    $vals = $settings |
-        ForEach-Object { [string]$_.Value } |
-        ForEach-Object { $_.Trim().Trim("'`"").ToUpper() }
-
-    # Pass only if ALL values match the expected value
-    $allMatch = ($vals | Where-Object { $_ -ne $want }).Count -eq 0
-
-    return [PSCustomObject]@{
-        STIGID    = $Row.STIGID
-        VID       = $Row.VID
-        VM        = $VM.Name
-        Check     = "AdvancedSetting: $($Row.CheckName)"
-        Expected  = $Row.Expected
-        Actual    = ($vals -join ', ')
-        Result    = if ($allMatch) { "Pass" } else { "Fail" }
-        Severity  = $Row.Severity
-        Timestamp = Get-Date
-    }
-}
 
     # ---- Concrete Expected (and maybe Expected2) ----
     if (-not $settings) {
